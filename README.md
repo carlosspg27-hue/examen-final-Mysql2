@@ -7,13 +7,21 @@ estos son los requerimientos que el examen necesita:
 
 Tarea:
 Crear una vista VW_EstadoEspacios que muestre:
+
 Espacio
+
 Estado (Libre / Ocupado)
+
 Próxima reserva
+
 Crear un procedimiento sp_GenerarReporteDiario que devuelva:
+
 Total de reservas hoy
+
 Usuarios activos en el día
+
 Ingresos del día
+
 Simular una consulta para mostrar en pantalla: "Ahora mismo hay X personas en el coworking".
 
 despues de cumplir con los requerimientos del examen se debe de subir a la plataforma campuslands antes de las 5 de la tarde en un repositorio de git  hub con README y el scrip en el que realizo el examen y debe contener la descripcion del proyecto y el srcip hecho
