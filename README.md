@@ -1,48 +1,53 @@
 # examen-Mysql2
-Documentación del Proyecto: Dashboard para Recepción (coworking_db)
+Documentación Técnica Extendida: Dashboard de Recepción (coworking_db)
 Estudiante / Desarrollador: Carlos Said
 
-Asignatura / Módulo: Base de Datos MySQL
+Asignatura / Módulo: Gestión de Bases de Datos Relacionales (MySQL)
 
-Plataforma de Entrega: Campuslands
+Plataforma de Evaluación: Campuslands
 
-Entregables: Repositorio en GitHub (Script SQL con comentarios de lógica y archivo README.md estructurado).
+Entregables del Proyecto: Repositorio público/privado en GitHub compuesto por el script SQL de producción con comentarios lógicos integrados y la documentación ejecutiva README.md.
 
-1. Contexto y Objetivos del Examen
-El objetivo principal de este examen es diseñar e implementar componentes en tiempo real para el módulo operativo de recepción de un espacio de Coworking. El dashboard busca solucionar las necesidades operativas diarias de la recepcionista mediante la consolidación de métricas de ocupación, reporte de ingresos en vivo y gestión visual del estado de cada espacio.
+1. Contexto Operativo y Objetivos del Examen
+El propósito fundamental de este examen práctico es la concepción, diseño e implementación de una solución de persistencia de datos en tiempo real adaptada a la infraestructura operativa de la recepción de un edificio de Coworking.
 
-Tareas y Requerimientos Cumplidos:
-Vista VW_EstadoEspacios: Visualización clara del identificador del espacio, su capacidad, su estado dinámico (Libre, Ocupado o Mantenimiento) y la fecha y hora exacta de la próxima reserva programada.
+En el flujo diario de trabajo, el personal de recepción requiere una herramienta ágil e intuitiva que centralice la información dispersa en el modelo relacional sin afectar el rendimiento de la base de datos principal. La solución desarrollada resuelve esta necesidad mediante tres componentes estratégicos:
 
-Procedimiento Almacenado sp_GenerarReporteDiario: Consolidación automática del balance diario, calculando el total de reservas activas del día, la cantidad de usuarios únicos dentro de las instalaciones e ingresos recaudados.
+Monitoreo de Infraestructura Física (VW_EstadoEspacios): Proporciona visibilidad en tiempo real sobre el estado operativo de las salas, oficinas y escritorios, sincronizando la disponibilidad actual con el cronograma de reservas futuras.
 
-Consulta de Ocupación en Tiempo Real: Indicador simulado para la pantalla principal que emite un mensaje estructurado evaluando el total de usuarios presentes y el estado general del establecimiento (Coworking Lleno, Coworking Moderado o Coworking Normal).
+Consolidación de Métricas Operativas (sp_GenerarReporteDiario): Automatiza el cálculo de indicadores clave de rendimiento (KPIs) diarios, combinando la concurrencia de usuarios, la actividad transaccional y la recaudación monetaria de la jornada.
 
-2. Explicación de la Lógica del Script
-A. Vista VW_EstadoEspacios
-Mapeo de Disponibilidad: Utiliza una estructura condicional para traducir el estado del espacio. Si el estado interno registra ocupado o mantenimiento, la vista devuelve la etiqueta correspondiente; en cualquier otro caso, devuelve Libre.
+Control de Ocupación e Indicador en Pantalla (Consulta en Tiempo Real): Ofrece un semáforo visual sobre la densidad de personas dentro de la sede para optimizar la seguridad, el flujo de paso en torniquetes y la atención al cliente.
 
-Cálculo de Próxima Reserva: Mediante una subconsulta escalar con la función de agregación para fechas mínimas, la vista busca el horario de la reserva confirmada o pendiente más cercana en el tiempo (para el día actual o días posteriores).
+2. Explicación Detallada de la Lógica del Script SQL
+A. Vista de Disponibilidad Física (VW_EstadoEspacios)
+Mapeo Dinámico de Estados: La vista realiza una proyección sobre la entidad espacio, aplicando una cláusula condicional CASE para estandarizar los estados del sistema. Transforma las banderas internas de la base de datos en categorías comprensibles para el usuario final: 'Ocupado', 'Mantenimiento' o 'Libre'.
 
-B. Procedimiento Almacenado sp_GenerarReporteDiario
-Total de Reservas: Realiza un conteo dinámico de todas las reservas registradas para la fecha actual en estados pendiente, confirmada o completada.
+Proyección de Próxima Reserva: Incorpora una subconsulta escalar que examina la tabla reserva buscando aquellos registros cuya fecha y hora sean iguales o posteriores al instante de la consulta (CURRENT_DATE() y CURRENT_TIME()). Mediante la función de agregación MIN(), identifica con precisión la reserva confirmada o pendiente más cercana, permitiendo a recepción anticipar la entrega de llaves o la preparación del espacio.
 
-Usuarios Activos: Calcula la cantidad de usuarios únicos que han registrado un acceso con estado permitido en la fecha actual, descartando registros nulos o no autorizados.
+B. Procedimiento Almacenado de Balance Operativo (sp_GenerarReporteDiario)
+Conteo de Reservas del Día: Realiza una lectura de la entidad reserva filtrando por la fecha actual (CURRENT_DATE()) e incluyendo únicamente estados operativamente válidos ('confirmada', 'completada' o 'pendiente').
 
-Ingresos del Día: Realiza la sumatoria de los montos registrados en la tabla de pagos para la fecha actual, filtrando exclusivamente los pagos en estado pagado y manejando valores nulos con un valor por defecto en cero.
+Concurrencia de Usuarios Activos: Evalúa los registros de la tabla control_acceso. Utiliza la función de agregación COUNT(DISTINCT id_usuario) filtrando por accesos con estado 'permitido' en la fecha actual, lo que garantiza contar individuos únicos sin duplicar asistencias por múltiples entradas durante la misma jornada.
 
-C. Consulta en Tiempo Real (Indicador de Ocupación)
-Filtrado de Usuarios Presentes: Filtra los registros de acceso del día actual que tienen estado permitido y cuya fecha y hora de salida se encuentra nula, indicando que la persona aún está en las instalaciones.
+Consolidación Financiera Diaria: Realiza la sumatoria acumulada (SUM) de la entidad pago para las transacciones procesadas con estado 'pagado' dentro de la fecha actual. Utiliza la función IFNULL() para prevenir retornos nulos (NULL) en días donde aún no se hayan registrado ingresos, garantizando un valor monetario por defecto de 0.00.
 
-Evaluación de Estado: Clasifica el número de ocupantes en pantalla. Si la cantidad alcanza o supera las 30 personas, emite la etiqueta Coworking Lleno.
+C. Consulta de Ocupación en Tiempo Real (Pantalla de Control)
+Auditoría de Presencia Física: Filtra la tabla control_acceso considerando los ingresos autorizados del día donde el atributo fecha_hora_salida permanezca nulo (IS NULL), lo cual representa a los usuarios que cruzaron el acceso y continúan dentro de las instalaciones.
 
-Formato del Mensaje: Imprime la cadena de texto exacta requerida para la interfaz del recepcionista: "Ahora mismo hay X personas en el coworking. Estado: Coworking Lleno".
+Evaluación de Nivel de Ocupación: Incorpora una lógica de clasificación para categorizar la capacidad utilizada. Si la cantidad de personas presentes alcanza o supera el umbral límite (30 personas), la consulta categoriza el estado como 'Coworking Lleno'; de lo contrario, determina estados intermedios de disponibilidad ('Coworking Moderado' o 'Coworking Normal').
 
-4. Pasos para la Presentación y Sustentación en Campuslands
-Subida al Repositorio: Asegurarse de que el script SQL contenga todos los comentarios explicativos y que el archivo README.md esté guardado en la raíz del proyecto.
+Salida Estandarizada para Interfaz: Retorna la cadena de texto exacta requerida por el sistema de recepción: "Ahora mismo hay X personas en el coworking. Estado: Coworking Lleno", simplificando la integración con cualquier panel web o aplicación de escritorio.
 
-Entrega de Enlace: Copiar la URL pública de GitHub y pegarla en el módulo de entregas de la plataforma Campuslands.
+3. Protocolo de Entrega y Sustentación en Campuslands
+Estructuración en GitHub: El repositorio debe contener en su raíz el archivo README.md minuciosamente redactado y el script ejecutable .sql estructurado bajo estándares de sintaxis limpia, uso de delimitadores (DELIMITER), gestión de transacciones y comentarios descriptivos.
 
-Límite de Tiempo: La entrega y última modificación del repositorio debe quedar registrada estrictamente antes de las 5:00 PM del día de hoy.
+Publicación y Registro: La URL del repositorio debe ser vinculada en el espacio correspondiente dentro de la plataforma Campuslands antes de la hora límite fijada (5:00 PM). Cualquier modificación posterior al horario establecido invalidará la versión entregada.
 
-Sustentación: Dominar la explicación de cada componente SQL (subconsultas escalares, condicionales CASE, funciones de agregación y filtros por fechas dinámicas) para responder las preguntas teóricas del evaluador.
+Defensa Teórica del Script: El estudiante debe estar preparado para sustentar técnicamente las decisiones de diseño adoptadas, demostrando dominio en:
+
+Optimización de consultas mediante filtros temporales dinámicos (CURRENT_DATE(), CURRENT_TIME()).
+
+Uso eficiente de JOINs, subconsultas escalares y agregaciones (COUNT(DISTINCT), SUM, MIN).
+
+Creación y encapsulamiento de lógica mediante Vistas (VIEW) y Procedimientos Almacenados (STORED PROCEDURE).
