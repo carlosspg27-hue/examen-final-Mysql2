@@ -24,6 +24,6 @@ Ingresos del día
 
 Simular una consulta para mostrar en pantalla: "Ahora mismo hay X personas en el coworking".
 
-despues de cumplir con los requerimientos del examen se debe de subir a la plataforma campuslands con fecha limite hoy mismo bajo el limite de tiempo hastas las 5 de la tarde despues de esa hora ya no se puede modificar el repo o subir algo a la plataformard debido a que se cumplio la fecha limite y el exmeane debe ir en un repositorio de git  hub con README y el scrip en el que realizo el examen y debe contener la descripcion del proyecto y el srcip hecho
+despues de cumplir con los requerimientos del examen se debe de subir a la plataforma campuslands con fecha limite hoy mismo bajo el limite de tiempo hastas las 5 de la tarde despues de esa hora ya no se puede modificar el repo o subir algo a la plataformar de campuslands debido a que se cumplio la fecha limite y el exmeane debe ir en un repositorio de git  hub con README y el scrip en el que realizo el examen y debe contener la descripcion del proyecto y el srcip hecho
 
 
