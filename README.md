@@ -1,29 +1,48 @@
 # examen-Mysql2
-Contexto:La recepcionista necesita un dashboard simple con datos en tiempo real.
+Documentación del Proyecto: Dashboard para Recepción (coworking_db)
+Estudiante / Desarrollador: Carlos Said
 
-el examen es un dashboard que debe mostrar el numero de personas en un coworking y el dasboard debe tener datos en tiempo real con vistas que muestren los espacios disponibles tambien debe mostrar el estado del espeacio si esta libre o ocupado debe tener la opcion de proxima reserva ademas tiene que contener un procedimiento sp_GenerarReporteDiario que debe devolver el total de las reservas debe mostrar los usuarios que estan activos durante el dia debe mostrar los ingresos generador en el dia  por ultimo se debe simular una consulta que se debe mostrar en la pantalla y debe mostrar un mensaje que debe decir lo siguiente: "Ahora mismo hay X personas en el coworking". el resultado esperado del examen es que se debe haber creado el repositorio en github que contenga la descripcion del proyecto y adema se debe de subir el scrip sql que cumpla con todo lo que se pide y debe tener comentarios explicando la logica del sql los resultados esperados del examen es que el proyecto siga todas las normativas requeridas el sql debe ser claro y con buenas practicas debe ser presentado formalmente subido en la plataforma campuslands cumpliendo las normativas reuqeridas y debe ser sustentado con conocimiento del script sql
+Asignatura / Módulo: Base de Datos MySQL
 
-estos son los requerimientos que el examen necesita:
+Plataforma de Entrega: Campuslands
 
-Tarea:
-Crear una vista VW_EstadoEspacios que muestre:
+Entregables: Repositorio en GitHub (Script SQL con comentarios de lógica y archivo README.md estructurado).
 
-Espacio
+1. Contexto y Objetivos del Examen
+El objetivo principal de este examen es diseñar e implementar componentes en tiempo real para el módulo operativo de recepción de un espacio de Coworking. El dashboard busca solucionar las necesidades operativas diarias de la recepcionista mediante la consolidación de métricas de ocupación, reporte de ingresos en vivo y gestión visual del estado de cada espacio.
 
-Estado (Libre / Ocupado)
+Tareas y Requerimientos Cumplidos:
+Vista VW_EstadoEspacios: Visualización clara del identificador del espacio, su capacidad, su estado dinámico (Libre, Ocupado o Mantenimiento) y la fecha y hora exacta de la próxima reserva programada.
 
-Próxima reserva
+Procedimiento Almacenado sp_GenerarReporteDiario: Consolidación automática del balance diario, calculando el total de reservas activas del día, la cantidad de usuarios únicos dentro de las instalaciones e ingresos recaudados.
 
-Crear un procedimiento sp_GenerarReporteDiario que devuelva:
+Consulta de Ocupación en Tiempo Real: Indicador simulado para la pantalla principal que emite un mensaje estructurado evaluando el total de usuarios presentes y el estado general del establecimiento (Coworking Lleno, Coworking Moderado o Coworking Normal).
 
-Total de reservas hoy
+2. Explicación de la Lógica del Script
+A. Vista VW_EstadoEspacios
+Mapeo de Disponibilidad: Utiliza una estructura condicional para traducir el estado del espacio. Si el estado interno registra ocupado o mantenimiento, la vista devuelve la etiqueta correspondiente; en cualquier otro caso, devuelve Libre.
 
-Usuarios activos en el día
+Cálculo de Próxima Reserva: Mediante una subconsulta escalar con la función de agregación para fechas mínimas, la vista busca el horario de la reserva confirmada o pendiente más cercana en el tiempo (para el día actual o días posteriores).
 
-Ingresos del día
+B. Procedimiento Almacenado sp_GenerarReporteDiario
+Total de Reservas: Realiza un conteo dinámico de todas las reservas registradas para la fecha actual en estados pendiente, confirmada o completada.
 
-Simular una consulta para mostrar en pantalla: "Ahora mismo hay X personas en el coworking".
+Usuarios Activos: Calcula la cantidad de usuarios únicos que han registrado un acceso con estado permitido en la fecha actual, descartando registros nulos o no autorizados.
 
-despues de cumplir con los requerimientos del examen se debe de subir a la plataforma campuslands con fecha limite hoy mismo bajo el limite de tiempo hastas las 5 de la tarde despues de esa hora ya no se puede modificar el repo o subir algo a la plataforma de campuslands debido a que se cumplio la fecha limite y el exmeane debe ir en un repositorio de git  hub con README y el scrip en el que realizo el examen y debe contener la descripcion del proyecto y el srcip hecho
+Ingresos del Día: Realiza la sumatoria de los montos registrados en la tabla de pagos para la fecha actual, filtrando exclusivamente los pagos en estado pagado y manejando valores nulos con un valor por defecto en cero.
 
+C. Consulta en Tiempo Real (Indicador de Ocupación)
+Filtrado de Usuarios Presentes: Filtra los registros de acceso del día actual que tienen estado permitido y cuya fecha y hora de salida se encuentra nula, indicando que la persona aún está en las instalaciones.
 
+Evaluación de Estado: Clasifica el número de ocupantes en pantalla. Si la cantidad alcanza o supera las 30 personas, emite la etiqueta Coworking Lleno.
+
+Formato del Mensaje: Imprime la cadena de texto exacta requerida para la interfaz del recepcionista: "Ahora mismo hay X personas en el coworking. Estado: Coworking Lleno".
+
+4. Pasos para la Presentación y Sustentación en Campuslands
+Subida al Repositorio: Asegurarse de que el script SQL contenga todos los comentarios explicativos y que el archivo README.md esté guardado en la raíz del proyecto.
+
+Entrega de Enlace: Copiar la URL pública de GitHub y pegarla en el módulo de entregas de la plataforma Campuslands.
+
+Límite de Tiempo: La entrega y última modificación del repositorio debe quedar registrada estrictamente antes de las 5:00 PM del día de hoy.
+
+Sustentación: Dominar la explicación de cada componente SQL (subconsultas escalares, condicionales CASE, funciones de agregación y filtros por fechas dinámicas) para responder las preguntas teóricas del evaluador.
